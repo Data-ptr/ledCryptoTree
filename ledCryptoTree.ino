@@ -13,22 +13,19 @@ Adafruit_NeoPixel spiral = Adafruit_NeoPixel(spiralNUM, spiralPIN, NEO_GRB + NEO
 void setup() {
   Serial.begin(9600);
   while (!Serial);
-  Serial.println("Input 1 pattern 1 on and pattern 2");
+  Serial.println("1-3 are state chamges 4-9 are light shows");
   vertical.begin();
   vertical.show(); // Initialize all pixels to 'off'
   spiral.begin();
   spiral.show(); // Initialize all pixels to 'off'
 }
 void loop() {
-  //CylonBounce(0xff, 0, 0, 4, 10, 50);
-  //
-  //
-  //
-  //simpleWave(0.3, 5, 10);
+  
   if ((goal[0]) && (goal[1]) && (goal[2])) {
-    simpleFadeIn(9, 1);
-    simpleFadeOut(9, 1);
-    RunningLights(0xff,0xff,0x00, 50);
+    simpleFadeIn(9, 3);
+    simpleFadeOut(9, 3);
+    RunningLights(0xff,0xff,0x00, 20);
+
   } else if (goal[0] && goal[1] && !goal[2]) {
     simpleFadeIn(9, 20);
       TwinkleRandom(20, 100, false);
@@ -45,6 +42,8 @@ void loop() {
       SnowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
     }
   } else {
+    simpleFadeIn(9, 30);
+    simpleFadeOut(9, 30);
   }
   if (Serial.available()) {
     int state = Serial.parseInt();
@@ -64,11 +63,10 @@ void loop() {
       goal[2] = true;
     }
     if (state == 4) {
-      simpleWave(0.3, 5, 10);
+      CylonBounce(0xff, 0xff, 0, 4, 10, 10);
     }
     if (state == 5) {
-      colorWipe(0x00, 0xff, 0x00, 50);
-      colorWipe(0x00, 0x00, 0x00, 50);
+      CylonBounce(0xff, 0, 0, 4, 10, 50);
     }
     if (state == 6) {
       colorCount(0x00, 0xff, 0x00, 50, 50);
@@ -106,11 +104,15 @@ void colorWipe(byte red, byte green, byte blue, int SpeedDelay) {
 }
 void colorCount(byte red, byte green, byte blue, int SpeedDelay, int percent) {
   percent = (VerticalNUM * percent) / 100;
-  colorWipe(0x00, 0x00, 0x00, 5);
+  for (uint16_t i = 0; i < spiralNUM; i++) {
+    setPixelS(i, 0, 0, 0);
+    showspiral();
+    delay(SpeedDelay);
+  }
   Serial.println(percent);
   for (uint16_t i = 0; i < percent; i++) {
-    setPixel(i, red, green, blue);
-    showvertical();
+    setPixelS(i, red, green, blue);
+    showspiral();
     delay(SpeedDelay);
   }
 }
@@ -125,7 +127,7 @@ void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
       //setPixel(i,level,0,0);
       //float level = sin(i+Position) * 127 + 128;
       setPixel(i, ((sin(i + Position) * 127 + 128) / 255)*red,
-               ((sin(i + Position) * 127 + 128) / 255)*green,
+               ((cos(i + Position) * 127 + 128) / 255)*green,
                ((sin(i + Position) * 127 + 128) / 255)*blue);
     }
 
@@ -134,38 +136,36 @@ void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
   }
 }
 void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay) {
-
+// Spiral pattern
   for (int i = 0; i < VerticalNUM - EyeSize - 2; i++) {
-    setAll(0, 0, 0);
-    setPixel(i, red / 10, green / 10, blue / 10);
+    setAllS(0, 0, 0);
+    setPixelS(i, red / 10, green / 10, blue / 10);
     for (int j = 1; j <= EyeSize; j++) {
-      setPixel(i + j, red, green, blue);
+      setPixelS(i + j, red, green, blue);
     }
-    setPixel(i + EyeSize + 1, red / 10, green / 10, blue / 10);
-    showvertical();
+    setPixelS(i + EyeSize + 1, red / 10, green / 10, blue / 10);
+    showspiral();
     delay(SpeedDelay);
   }
-
   delay(ReturnDelay);
-
-  for (int i = VerticalNUM - EyeSize - 2; i > 0; i--) {
-    setAll(0, 0, 0);
-    setPixel(i, red / 10, green / 10, blue / 10);
+  for (int i = spiralNUM - EyeSize - 2; i > 0; i--) {
+    setAllS(0, 0, 0);
+    setPixelS(i, red / 10, green / 10, blue / 10);
     for (int j = 1; j <= EyeSize; j++) {
-      setPixel(i + j, red, green, blue);
+      setPixelS(i + j, red, green, blue);
     }
-    setPixel(i + EyeSize + 1, red / 10, green / 10, blue / 10);
-    showvertical();
+    setPixelS(i + EyeSize + 1, red / 10, green / 10, blue / 10);
+    showspiral();
     delay(SpeedDelay);
   }
 
   delay(ReturnDelay);
 }
 
-
+// Vertical Patterns
 void TwinkleRandom(int Count, int SpeedDelay, boolean OnlyOne) {
+// Vertical Patern
   setAll(0, 0, 0);
-
   for (int i = 0; i < Count; i++) {
     setPixel(random(VerticalNUM), random(0, 255), random(0, 255), random(0, 255));
     showvertical();
@@ -174,10 +174,10 @@ void TwinkleRandom(int Count, int SpeedDelay, boolean OnlyOne) {
       setAll(0, 0, 0);
     }
   }
-
   delay(SpeedDelay);
 }
 void SnowSparkle(byte red, byte green, byte blue, int SparkleDelay, int SpeedDelay) {
+// Vertical Pattern
   setAll(red, green, blue);
 
   int Pixel = random(VerticalNUM);
@@ -189,6 +189,7 @@ void SnowSparkle(byte red, byte green, byte blue, int SparkleDelay, int SpeedDel
   delay(SpeedDelay);
 }
 void Sparkle(byte red, byte green, byte blue, int SpeedDelay) {
+ // Vertical Pattern
   int Pixel = random(VerticalNUM);
   setPixel(Pixel, red, green, blue);
   showvertical();
@@ -196,35 +197,8 @@ void Sparkle(byte red, byte green, byte blue, int SpeedDelay) {
   setPixel(Pixel, 0, 0, 0);
 }
 
-void showvertical() {
-#ifdef ADAFRUIT_NEOPIXEL_H
-  // NeoPixel
-  vertical.show();
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
-  // FastLED
-  FastLED.show();
-#endif
-}
-
-void setPixel(int Pixel, byte red, byte green, byte blue) {
-#ifdef ADAFRUIT_NEOPIXEL_H
-  // NeoPixel
-  vertical.setPixelColor(Pixel, vertical.Color(red, green, blue));
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
-  // FastLED
-  leds[Pixel].r = red;
-  leds[Pixel].g = green;
-  leds[Pixel].b = blue;
-#endif
-}
-
-
-
-
-
 void simpleWave(float rate, int cycles, int wait) {
+  // Vertical Patern
   float pos = 0.0;
   // cycle through x times
   for (int x = 0; x < (vertical.numPixels()*cycles); x++)
@@ -238,9 +212,64 @@ void simpleWave(float rate, int cycles, int wait) {
     delay(wait);
   }
 }
+
+
+// Helpers for Vertical
+void setPixel(int Pixel, byte red, byte green, byte blue) {
+#ifdef ADAFRUIT_NEOPIXEL_H
+  // NeoPixel
+  vertical.setPixelColor(Pixel, vertical.Color(red, green, blue));
+#endif
+#ifndef ADAFRUIT_NEOPIXEL_H
+  // FastLED
+  leds[Pixel].r = red;
+  leds[Pixel].g = green;
+  leds[Pixel].b = blue;
+#endif
+}
 void setAll(byte red, byte green, byte blue) {
   for (int i = 0; i < VerticalNUM; i++ ) {
     setPixel(i, red, green, blue);
   }
   showvertical();
+}
+void showvertical() {
+#ifdef ADAFRUIT_NEOPIXEL_H
+  // NeoPixel
+  vertical.show();
+#endif
+#ifndef ADAFRUIT_NEOPIXEL_H
+  // FastLED
+  FastLED.show();
+#endif
+}
+
+// Helpers for Spiral
+void setPixelS(int Pixel, byte red, byte green, byte blue) {
+#ifdef ADAFRUIT_NEOPIXEL_H
+  // NeoPixel
+  spiral.setPixelColor(Pixel, spiral.Color(red, green, blue));
+#endif
+#ifndef ADAFRUIT_NEOPIXEL_H
+  // FastLED
+  leds[Pixel].r = red;
+  leds[Pixel].g = green;
+  leds[Pixel].b = blue;
+#endif
+}
+void setAllS(byte red, byte green, byte blue) {
+  for (int i = 0; i < spiralNUM; i++ ) {
+    setPixelS(i, red, green, blue);
+  }
+  showspiral();
+}
+void showspiral() {
+#ifdef ADAFRUIT_NEOPIXEL_H
+  // NeoPixel
+  spiral.show();
+#endif
+#ifndef ADAFRUIT_NEOPIXEL_H
+  // FastLED
+  FastLED.show();
+#endif
 }
