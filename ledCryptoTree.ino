@@ -1,42 +1,66 @@
 #include <Adafruit_NeoPixel.h>
+
 #define PIN 6
 #define NUM_LEDS 20
+
 int ledPin = 9;
+
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
+
 
 void setup() {
   Serial.begin(9600);
+  
+  //Wait for Serial to become active
   while (!Serial);
+  
   Serial.println("Input 1 pattern 1 on and pattern 2");
+  
+  // Kick start strip
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
 }
 
+
 void loop() {
+  runPatterens();
+  
+  readSerial();
+}
+
+
+void testPatterens() {
   //CylonBounce(0xff, 0, 0, 4, 10, 50);
   //TwinkleRandom(20, 100, false);
-//Sparkle(random(255), random(255), random(255), 20);
-//SnowSparkle(0x10, 0x10, 0x10, 20, random(100,100));
-//RunningLights(0xff,0xff,0x00, 50);
+  //Sparkle(random(255), random(255), random(255), 20);
+  //SnowSparkle(0x10, 0x10, 0x10, 20, random(100,100));
+  //RunningLights(0xff,0xff,0x00, 50);
+  //simpleWave(0.3, 5, 10);
+  
+  simpleFadeIn(9, 20);
+  simpleFadeOut(9, 20);
+}
 
-//        simpleWave(0.3, 5, 10);
-simpleFadeIn(9, 20);
-simpleFadeOut(9, 20);
- if (Serial.available()) {
-    int state = Serial.parseInt();
-    if (state == 1) {
-      Serial.println("Pattern 1 started");
-      colorWipe(0x00,0xff,0x00, 50);
-      colorWipe(0x00,0x00,0x00, 50);
-      Serial.println("Pattern 1 complete");
-    }
-    if (state == 2) {
-      Serial.println("pattern 2 started");
-      simpleWave(0.3, 5, 10);
-      Serial.println("patterm 2 complete");
-    }
+
+void readSerial() {
+  if (Serial.available()) {
+   int state = Serial.parseInt();
+   
+   if (state == 1) {
+     Serial.println("Pattern 1 started");
+     colorWipe(0x00,0xff,0x00, 50);
+     colorWipe(0x00,0x00,0x00, 50);
+     Serial.println("Pattern 1 complete");
+   }
+   
+   if (state == 2) {
+     Serial.println("pattern 2 started");
+     simpleWave(0.3, 5, 10);
+     Serial.println("patterm 2 complete");
+   }
   }
 }
+
 void simpleFadeIn(int pin, int speedVal) {
   for (int fadeValue = 0 ; fadeValue <= 255; fadeValue += 5) {
     analogWrite(ledPin, fadeValue);
