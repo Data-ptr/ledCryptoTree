@@ -4,7 +4,6 @@
 #define NEOPIX_TYPE NEO_GRB + NEO_KHZ800
 #define SERIAL_DATA_RATE 9600
 
-
 #define VERTICAL_PIN 6
 #define VERTICAL_NUM 10
 
@@ -12,9 +11,15 @@
 #define SPIRAL_NUM 10
 
 
-bool goal[] = {
-  false, false, false
-};
+typedef enum Goals {
+  NONE   = 0,
+  SMALL  = 1,
+  MEDIUM = 2,
+  BIG    = 4
+} Goals;
+
+
+Goals goal = NONE;
 
 // Fairy lights
 int ledPin = 9;
@@ -40,40 +45,55 @@ void setup() {
 
 
 void loop() {
+  // Read the serial in and match a number passed in
+  parseSerial();
   
-  if ((goal[0]) && (goal[1]) && (goal[2])) {
-    simpleFadeIn(9, 3);
-    simpleFadeOut(9, 3);
+  // Baised on the state of goal, do patterens
+  parseGoals();
+}
 
-    runningLights(0xff,0xff,0x00, 20);
 
-  }
-  elif (goal[0] && goal[1] && !goal[2]) {
-    simpleFadeIn(9, 20);
-
-    twinkleRandom(20, 100, false);
-
-    simpleFadeOut(9, 20);
-    twinkleRandom(20, 100, false);
-  }
-  elif (goal[0] && !goal[1] && !goal[2]) {
-    simpleFadeIn(9, 50);
+void parseGoals() {
+  switch (goal) {
+    case BIG:
+      simpleFadeIn(9, 3);
+      simpleFadeOut(9, 3);
+      
+      runningLights(0xff,0xff,0x00, 20);
+    break;
     
-    for (uint8_t i = 0; i < 10; i++) {
-      snowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
-    }
-
-    simpleFadeOut(9, 50);
-
-    for (uint8_t i = 0; i < 10; i++) {
-      snowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
-    }
+    case MEDIUM:
+      simpleFadeIn(9, 20);
+      
+      twinkleRandom(20, 100, false);
+      
+      simpleFadeOut(9, 20);
+      twinkleRandom(20, 100, false);
+    break;
+    
+    case SMALL:
+      simpleFadeIn(9, 50);
+      
+      for (uint8_t i = 0; i < 10; i++) {
+        snowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
+      }
+      
+      simpleFadeOut(9, 50);
+      
+      for (uint8_t i = 0; i < 10; i++) {
+        snowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
+      }
+    break;
+    
+    default:
+      simpleFadeIn(9, 30);
+      simpleFadeOut(9, 30);
+    break;
   }
-  else {
-    simpleFadeIn(9, 30);
-    simpleFadeOut(9, 30);
-  }
+}
 
+
+void parseSerial() {
   if (Serial.available()) {
     int state = Serial.parseInt();
 
@@ -84,47 +104,42 @@ void loop() {
     if (state) {
       switch (state) {
         case 1:
-          goal[0] = true;
-          goal[1] = false;
-          goal[2] = false;
+          goal = SMALL;
         break;
         
         case 2:
-          goal[0] = true;
-          goal[1] = true;
-          goal[2] = false;
-       break;
+          goal = MEDIUM;
+        break;
 
-       case 3:
-         goal[0] = true;
-         goal[1] = true;
-         goal[2] = true;
-       break;
+        case 3:
+          goal = BIG;
+        break;
 
-       case 4:
-         cylonBounce(0xff, 0xff, 0, 4, 10, 10);
-       break;
+        case 4:
+          cylonBounce(0xff, 0xff, 0, 4, 10, 10);
+        break;
 
-       case 5:
-         cylonBounce(0xff, 0, 0, 4, 10, 50);
-       break;
+        case 5:
+          cylonBounce(0xff, 0, 0, 4, 10, 50);
+        break;
 
-       case 6:
-         colorCount(0x00, 0xff, 0x00, 50, 50);
-       break;
+        case 6:
+          colorCount(0x00, 0xff, 0x00, 50, 50);
+        break;
       
-       case 7:
-         colorCount(0x00, 0xff, 0x00, 50, 100);
-      break;
+        case 7:
+          colorCount(0x00, 0xff, 0x00, 50, 100);
+        break;
 
-      case 8:
-        colorCount(0x00, 0xff, 0x00, 50, 30);
-      break;
+        case 8:
+          colorCount(0x00, 0xff, 0x00, 50, 30);
+        break;
 
-      case 9:
-        colorCount(0x00, 0xff, 0x00, 50, 10);
-      break;
-    };
+        case 9:
+          colorCount(0x00, 0xff, 0x00, 50, 10);
+        break;
+      };
+    }
   }
 }
 
@@ -178,7 +193,7 @@ void colorCount(byte red, byte green, byte blue, int speedDelay, int percent) {
 
   Serial.println(percent);
 
-  for (uint16_t i = 0; i < percent; i++) {
+  for (uint16_t i = 0; i < (uint16_t)percent; i++) {
     setPixelS(i, red, green, blue);
 
     showSpiral();
@@ -214,7 +229,6 @@ void runningLights(byte red, byte green, byte blue, int waveDelay) {
 //
 // ##########
 
-
 //TODO: It is labled as sprial, includes spiral, but also has vertical?
 void cylonBounce(byte red, byte green, byte blue, int eyeSize, int speedDelay, int returnDelay) {
   //
@@ -229,7 +243,7 @@ void cylonBounce(byte red, byte green, byte blue, int eyeSize, int speedDelay, i
     setPixelS(i, red / 10, green / 10, blue / 10);
     
     // Inner-loop
-    for (uint16_t j = 1; j <= eyeSize; j++) {
+    for (uint16_t j = 1; j <= (uint16_t)eyeSize; j++) {
       setPixelS(i + j, red, green, blue);
     }
 
@@ -276,10 +290,13 @@ void cylonBounce(byte red, byte green, byte blue, int eyeSize, int speedDelay, i
 // ##########
 
 void twinkleRandom(int count, int speedDelay, boolean onlyOne) {
-  // Vertical Patern
+  //
+  // Vertical Pattern
+  //
+  
   setAll(0, 0, 0);
 
-  for (int i = 0; i < Count; i++) {
+  for (int i = 0; i < count; i++) {
     setPixel(
       random(VERTICAL_NUM),
       random(0, 255),
@@ -360,7 +377,7 @@ void simpleWave(float rate, int cycles, int wait) {
   for (int x = 0; x < loopTest; x++) {
     pos = pos + rate;
 
-    for (int i = 0; i < vertical.numPixels(); i++) {
+    for (uint16_t i = 0; i < vertical.numPixels(); i++) {
       float level = sin(i + pos) * 127 + 128;
 
       vertical.setPixelColor(i, (int)level, 255, 0);
@@ -440,7 +457,7 @@ void setPixelS(uint16_t pixel, byte red, byte green, byte blue) {
 
 
 void setAllS(byte red, byte green, byte blue) {
-  for (uint16_t i = 0; i < SPRIAL_NUM; i++ ) {
+  for (uint16_t i = 0; i < SPIRAL_NUM; i++ ) {
     setPixelS(i, red, green, blue);
   }
 
