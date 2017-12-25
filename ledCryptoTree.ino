@@ -1,46 +1,21 @@
+//
+// Includes
+//
+
 #include <Adafruit_NeoPixel.h>
+#include "ledCryptoTree.h"
 
 
-#define NEOPIX_TYPE NEO_GRB + NEO_KHZ800
-#define SERIAL_DATA_RATE 9600
-
-#define VERTICAL_PIN 6
-#define VERTICAL_NUM 10
-
-#define SPIRAL_PIN 7
-#define SPIRAL_NUM 10
-
-
-typedef enum Goals {
-  NONE   = 0,
-  SMALL  = 1,
-  MEDIUM = 2,
-  BIG    = 4
-} Goals;
-
-
-Goals goal = NONE;
-
-// Fairy lights
-int ledPin = 9;
-
-Adafruit_NeoPixel vertical = Adafruit_NeoPixel(VERTICAL_NUM, VERTICAL_PIN, NEOPIX_TYPE);
-Adafruit_NeoPixel spiral   = Adafruit_NeoPixel(SPIRAL_NUM,   SPIRAL_PIN,   NEOPIX_TYPE);
-
+// ##########
+//
+// mController Functions
+//
+// ##########
 
 void setup() {
-  Serial.begin(SERIAL_DATA_RATE);
-  
-  // Wait for Serial to become active
-  while (!Serial);
-
-  Serial.println("1-3 are state chamges 4-9 are light shows");
+  setupSerial();
  
-  vertical.begin();
-  vertical.show(); // Initialize all pixels to 'off'
-
-  spiral.begin();
-  spiral.show();   // Initialize all pixels to 'off'
+  setupNeopix();
 }
 
 
@@ -53,41 +28,75 @@ void loop() {
 }
 
 
+// ##########
+//
+// Setup Functions
+//
+// ##########
+
+void setupSerial() {
+ Serial.begin(SERIAL_DATA_RATE);
+  
+  // Wait for Serial to become active
+  while(!Serial);
+
+  Serial.println("1-3 are state chamges 4-9 are light shows");
+}
+
+
+void setupNeopix() {
+  vertical.begin();
+  vertical.show(); // Initialize all pixels to 'off'
+
+  spiral.begin();
+  spiral.show();   // Initialize all pixels to 'off'
+}
+
+
+// ##########
+//
+// Parse Functions
+//
+// ##########
+
 void parseGoals() {
-  switch (goal) {
+  switch(goal) {
     case BIG:
-      simpleFadeIn(9, 3);
-      simpleFadeOut(9, 3);
+    { // Scope it cause I can (But really initilizers)
+      simpleFadeIn(FAIRY_PIN, 3);
+      simpleFadeOut(FAIRY_PIN, 3);
       
-      runningLights(0xff,0xff,0x00, 20);
+      runningLights((LwColor){0xff, 0xff, 0x00}, 20);
+    }
     break;
     
     case MEDIUM:
-      simpleFadeIn(9, 20);
-      
+      simpleFadeIn(FAIRY_PIN, 20);
       twinkleRandom(20, 100, false);
       
-      simpleFadeOut(9, 20);
+      simpleFadeOut(FAIRY_PIN, 20);
       twinkleRandom(20, 100, false);
     break;
     
     case SMALL:
-      simpleFadeIn(9, 50);
+    {
+      simpleFadeIn(FAIRY_PIN, 50);
       
-      for (uint8_t i = 0; i < 10; i++) {
-        snowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
+      // Making local variable as it will be in a loop (Yeah, it is probably optimized that way)
+      LwColor c = {0x10, 0x10, 0x10};
+      
+      for(uint8_t i = 0; i < 20; i++) {
+        snowSparkle(c, 20, random(10, 100));
+ 
+        if(10 == i)
+          simpleFadeOut(FAIRY_PIN, 50);
       }
-      
-      simpleFadeOut(9, 50);
-      
-      for (uint8_t i = 0; i < 10; i++) {
-        snowSparkle(0x10, 0x10, 0x10, 20, random(10, 100));
-      }
+    }
     break;
     
     default:
-      simpleFadeIn(9, 30);
-      simpleFadeOut(9, 30);
+      simpleFadeIn(FAIRY_PIN, 30);
+      simpleFadeOut(FAIRY_PIN, 30);
     break;
   }
 }
@@ -116,27 +125,27 @@ void parseSerial() {
         break;
 
         case 4:
-          cylonBounce(0xff, 0xff, 0, 4, 10, 10);
+          cylonBounce((LwColor){0xff, 0xff, 0x00}, 4, 10, 10);
         break;
 
         case 5:
-          cylonBounce(0xff, 0, 0, 4, 10, 50);
+          cylonBounce(LW_RED, 4, 10, 50);
         break;
 
         case 6:
-          colorCount(0x00, 0xff, 0x00, 50, 50);
+          colorCount(LW_GREEN, 50, 50);
         break;
       
         case 7:
-          colorCount(0x00, 0xff, 0x00, 50, 100);
+          colorCount(LW_GREEN, 50, 100);
         break;
 
         case 8:
-          colorCount(0x00, 0xff, 0x00, 50, 30);
+          colorCount(LW_GREEN, 50, 30);
         break;
 
         case 9:
-          colorCount(0x00, 0xff, 0x00, 50, 10);
+          colorCount(LW_GREEN, 50, 10);
         break;
       };
     }
@@ -146,13 +155,13 @@ void parseSerial() {
 
 // ##########
 //
-// Patterens
-//
+// Simple Patterns
+// (Fairy Lights)
 // ##########
 
 void simpleFadeIn(int pin, int speedVal) {
-  for (uint8_t fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
-    analogWrite(ledPin, fadeValue);
+  for (uint8_t fadeValue = COLOR_VAL_MIN; fadeValue <= COLOR_VAL_MAX; fadeValue += 5) {
+    analogWrite(pin, fadeValue);
 
     delay(speedVal);
   } 
@@ -160,121 +169,123 @@ void simpleFadeIn(int pin, int speedVal) {
 
 
 void simpleFadeOut(int pin, int speedVal) {
-  for (uint8_t fadeValue = 255 ; fadeValue >= 0; fadeValue -= 5) {
-    analogWrite(ledPin, fadeValue);
+  for (uint8_t fadeValue = COLOR_VAL_MAX; fadeValue >= COLOR_VAL_MIN; fadeValue -= 5) {
+    analogWrite(pin, fadeValue);
 
     delay(speedVal);
   }
 }
 
 
-void colorWipe(byte red, byte green, byte blue, int speedDelay) {
-  for (uint16_t i = 0; i < VERTICAL_NUM; i++) {
-    setPixel(i, red, green, blue);
 
-    showVertical();
-
-    delay(speedDelay);
-  }
-}
+// ##########
+//
+// Spiral Patterns
+//
+// ##########
 
 
-void colorCount(byte red, byte green, byte blue, int speedDelay, int percent) {
+void colorCount(LwColor color, int speedDelay, int percent) {
   //Modify percent
-  percent = (VERTICAL_NUM * percent) / 100;
+  percent = (VERTICAL_NUM * percent) / 100; //TODO: Make a macro for dis
+  //TODO: Also, I think this is supposed to be SPIRAL_NUM?
 
-  for (uint16_t i = 0; i < SPIRAL_NUM; i++) {
-    setPixelS(i, 0, 0, 0);
+  for(Pixel i = 0; i < SPIRAL_NUM; i++) {
+    setPixelNil(spiral, i);
 
-    showSpiral();
+    show(spiral);
 
     delay(speedDelay);
   }
 
   Serial.println(percent);
 
-  for (uint16_t i = 0; i < (uint16_t)percent; i++) {
-    setPixelS(i, red, green, blue);
+  for (Pixel i = 0; i < (Pixel)percent; i++) {
+    setPixel(spiral, i, color);
 
-    showSpiral();
+    show(spiral);
 
     delay(speedDelay);
   }
 }
 
 
-void runningLights(byte red, byte green, byte blue, int waveDelay) {
-  int position = 0;
-
-  for (int i = 0; i < VERTICAL_NUM * 2; i++, position++) {
-    for (int i = 0; i < VERTICAL_NUM; i++) {
-      setPixel(
-        i,
-        ((sin(i + position) * 127 + 128) / 255) * red,
-        ((cos(i + position) * 127 + 128) / 255) * green,
-        ((sin(i + position) * 127 + 128) / 255) * blue
-      );
-    }
-
-    showVertical();
-
-    delay(waveDelay);
-  }
-}
-
-
-// ##########
-//
-// Spiral Patterens
-//
-// ##########
-
 //TODO: It is labled as sprial, includes spiral, but also has vertical?
-void cylonBounce(byte red, byte green, byte blue, int eyeSize, int speedDelay, int returnDelay) {
+void cylonBounce(LwColor color, int eyeSize, int speedDelay, int returnDelay) {
   //
   // Spiral pattern
   //
+  
+  LwColor colorTenthed = (LwColor){
+    DIV_CONV(color.red, 10),
+    DIV_CONV(color.green, 10),
+    DIV_CONV(color.blue, 10)
+  };
 
-  uint16_t loopTest = VERTICAL_NUM - eyeSize - 2;
+  Pixel loopTest = VERTICAL_NUM - eyeSize - 2;
 
-  for (uint16_t i = 0; i < loopTest; i++) {
-    setAllS(0, 0, 0);
+  for(Pixel i = 0; i < loopTest; i++) {
+    setAllNil(spiral);
 
-    setPixelS(i, red / 10, green / 10, blue / 10);
+    setPixel(
+      spiral,
+      i,
+      colorTenthed
+    );
     
     // Inner-loop
-    for (uint16_t j = 1; j <= (uint16_t)eyeSize; j++) {
-      setPixelS(i + j, red, green, blue);
+    for(Pixel j = 1; j <= (Pixel)eyeSize; j++) {
+      setPixel(
+        spiral,
+        i + j,
+        color
+      );
     }
 
-    uint16_t n = i + eyeSize + 1;
+    Pixel n = i + eyeSize + 1;
 
-    setPixelS(n, red / 10, green / 10, blue / 10);
+    setPixel(
+      spiral,
+      n,
+      colorTenthed
+    );
 
-    showSpiral();
+    show(spiral);
 
     delay(speedDelay);
   }
 
   delay(returnDelay);
 
-  uint16_t loopInit = SPIRAL_NUM - eyeSize - 2;
+  Pixel loopInit = SPIRAL_NUM - eyeSize - 2;
 
-  for (uint16_t i = loopInit; i > 0; i--) {
-    setAllS(0, 0, 0);
+  for(Pixel i = loopInit; i > 0; i--) {
+    setAllNil(spiral);
 
-    setPixelS(i, red / 10, green / 10, blue / 10);
+    setPixel(
+      spiral,
+      i,
+      colorTenthed
+    );
 
     // Inner-loop
-    for (int j = 1; j <= eyeSize; j++) {
-      setPixelS(i + j, red, green, blue);
+    for (Pixel j = 1; j <= (Pixel)eyeSize; j++) {
+      setPixel(
+        spiral,
+        i + j,
+        color
+      );
     }
 
-    uint16_t n = i + eyeSize + 1;
+    Pixel n = i + eyeSize + 1;
  
-    setPixelS(n, red / 10, green / 10, blue / 10);
+    setPixel(
+      spiral,
+      n,
+      colorTenthed
+    );
 
-    showSpiral();
+    show(spiral);
 
     delay(speedDelay);
   }
@@ -289,101 +300,146 @@ void cylonBounce(byte red, byte green, byte blue, int eyeSize, int speedDelay, i
 //
 // ##########
 
+
+void colorWipe(LwColor color, int speedDelay) {
+  for(Pixel i = 0; i < VERTICAL_NUM; i++) {
+    setPixel(
+      vertical,
+      i,
+      color
+    );
+
+    show(vertical);
+
+    delay(speedDelay);
+  }
+}
+
+
+void runningLights(LwColor color, int waveDelay) {
+  for(Pixel i = 0; i < VERTICAL_NUM * 2; i++) {
+    for(Pixel j = 0; j < VERTICAL_NUM; j++) {
+      int p = j + i;
+      
+      setPixel(
+        vertical,
+        j,
+        (LwColor) {
+          COLOR_SIN_CONV(p, color.red),
+          COLOR_SIN_CONV(p, color.green),
+          COLOR_SIN_CONV(p, color.blue)
+        }
+      );
+    }
+
+    show(vertical);
+
+    delay(waveDelay);
+  }
+}
+
+
 void twinkleRandom(int count, int speedDelay, boolean onlyOne) {
   //
   // Vertical Pattern
   //
   
-  setAll(0, 0, 0);
+  setAllNil(vertical);
 
-  for (int i = 0; i < count; i++) {
+  for(int i = 0; i < count; i++) {
     setPixel(
-      random(VERTICAL_NUM),
-      random(0, 255),
-      random(0, 255),
-      random(0, 255)
+      vertical,
+      (Pixel)random(VERTICAL_NUM),
+      (LwColor) {
+        COLOR_VAL_RAND,
+        COLOR_VAL_RAND,
+        COLOR_VAL_RAND
+      }
     );
 
-    showVertical();
+    show(vertical);
 
     delay(speedDelay);
 
-    if (onlyOne) {
-      setAll(0, 0, 0);
+    if(onlyOne) {
+      setAllNil(vertical);
     }
+    
+    //TODO: Delay? Show?
   }
 
   delay(speedDelay);
 }
 
 
-void snowSparkle(byte red, byte green, byte blue, int sparkleDelay, int speedDelay) {
+void snowSparkle(LwColor color, int sparkleDelay, int speedDelay) {
   //
   // Vertical Pattern
   //
 
-  int pixel = random(VERTICAL_NUM);
+  Pixel pixel = (Pixel)random(VERTICAL_NUM);
 
   // Set all pixles to passed in values
-  setAll(red, green, blue);
+  setAll(vertical, color);
   
   // Set random pixel to white
-  setPixel(pixel, 0xff, 0xff, 0xff);
+  setPixel(vertical, pixel, LW_WHITE);
 
-  showVertical();
+  show(vertical);
 
   delay(sparkleDelay);
 
 
   // Reset random pixel to passed in values
-  setPixel(pixel, red, green, blue);
+  setPixel(vertical, pixel, color);
 
-  showVertical();
+  show(vertical);
 
   delay(speedDelay);
 }
 
 
-void sparkle(byte red, byte green, byte blue, int speedDelay) {
+void sparkle(LwColor color, int speedDelay) {
   //
   // Vertical Pattern
   //
 
-  int pixel = random(VERTICAL_NUM);
+  Pixel pixel = (Pixel)random(VERTICAL_NUM);
 
   // Set random pixel to passed in values
-  setPixel(pixel, red, green, blue);
+  setPixel(vertical, pixel, color);
 
-  showVertical();
+  show(vertical);
 
   delay(speedDelay);
 
   // Set random pixel to black
-  setPixel(pixel, 0, 0, 0);
+  setPixelNil(vertical, pixel);
 }
 
 
-//TODO:  Why not use VERTICAL_NUM in here?
 void simpleWave(float rate, int cycles, int wait) {
   //
-  // Vertical Patern
+  // Vertical Pattern
   //
+
+  // cycle through i times
+  Pixel loopTest = VERTICAL_NUM * cycles;
 
   float pos = 0.0;
 
-  // cycle through x times
-  uint8_t loopTest = vertical.numPixels() * cycles;
+  for(Pixel i = 0; i < loopTest; i++, pos += rate) {
+    for(Pixel j = 0; j < VERTICAL_NUM; i++) {
+      float level = RGB_SINE(j, pos);
 
-  for (int x = 0; x < loopTest; x++) {
-    pos = pos + rate;
-
-    for (uint16_t i = 0; i < vertical.numPixels(); i++) {
-      float level = sin(i + pos) * 127 + 128;
-
-      vertical.setPixelColor(i, (int)level, 255, 0);
+      setPixel(
+        vertical,
+        j,
+        (LwColor){(byte)level, 255, 0}
+      );
     }
 
-    vertical.show();
+    show(vertical);
 
     delay(wait);
   }
@@ -392,88 +448,54 @@ void simpleWave(float rate, int cycles, int wait) {
 
 // ##########
 //
-// Helpers for Vertical
+// Helpers for Adafruit_NeoPixels
 //
 // ##########
 
-void setPixel(uint16_t pixel, byte red, byte green, byte blue) {
+
+void setPixel(NeoPix neopix, Pixel pixel, LwColor color) {
 
 #ifdef ADAFRUIT_NEOPIXEL_H
   // NeoPixel
-  vertical.setPixelColor(pixel, vertical.Color(red, green, blue));
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
+  neopix.setPixelColor(pixel, neopix.Color(color.red, color.green, color.blue));
+#else
   // FastLED
-  leds[pixel].r = red;
-  leds[pixel].g = green;
-  leds[pixel].b = blue;
+  leds[pixel].r = color.red; //TODO: No idea.
+  leds[pixel].g = color.green;
+  leds[pixel].b = color.blue;
 #endif
 
 }
 
 
-void setAll(byte red, byte green, byte blue) {
-  for (uint16_t i = 0; i < VERTICAL_NUM; i++) {
-    setPixel(i, red, green, blue);
+void setPixelNil(NeoPix neopix, Pixel pixel) {
+  setPixel(neopix, pixel, LW_BLACK);
+};
+
+
+void setAll(NeoPix neopix, LwColor color) {
+  for (Pixel i = 0; i < neopix.numPixels(); i++) {
+    setPixel(neopix, i, color);
   }
 
-  showVertical();
+  show(neopix);
 }
 
-void showVertical() {
+
+void setAllNil(NeoPix neopix) {
+  setAll(neopix, LW_BLACK);
+}
+
+
+void show(NeoPix neopix) {
 
 #ifdef ADAFRUIT_NEOPIXEL_H
   // NeoPixel
-  vertical.show();
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
+  neopix.show();
+#else
   // FastLED
-  FastLED.show();
+  FastLED.show(); //TODO: Is this actually right?
 #endif
 
 }
 
-
-// ##########
-//
-// Helpers for Spiral
-//
-// ##########
-
-void setPixelS(uint16_t pixel, byte red, byte green, byte blue) {
-
-#ifdef ADAFRUIT_NEOPIXEL_H
-  // NeoPixel
-  spiral.setPixelColor(pixel, spiral.Color(red, green, blue));
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
-  // FastLED
-  leds[pixel].r = red;
-  leds[pixel].g = green;
-  leds[pixel].b = blue;
-#endif
-
-}
-
-
-void setAllS(byte red, byte green, byte blue) {
-  for (uint16_t i = 0; i < SPIRAL_NUM; i++ ) {
-    setPixelS(i, red, green, blue);
-  }
-
-  showSpiral();
-}
-
-
-void showSpiral() {
-
-#ifdef ADAFRUIT_NEOPIXEL_H
-  // NeoPixel
-  spiral.show();
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
-  // FastLED
-  FastLED.show();
-#endif
-
-}
