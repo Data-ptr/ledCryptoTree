@@ -6,6 +6,7 @@
 bool goal[] = {
   false, false, false
 };
+bool randomMode = false;
 int ledPin = 2;
 Adafruit_NeoPixel vertical = Adafruit_NeoPixel(VerticalNUM, verticalPIN, NEO_GRB + NEO_KHZ400);
 Adafruit_NeoPixel spiral = Adafruit_NeoPixel(spiralNUM, spiralPIN, NEO_GRB + NEO_KHZ400);
@@ -14,96 +15,130 @@ void setup() {
   Serial.begin(9600);
   while (!Serial);
   Serial.println("1-3 are state chamges 4-9 are light shows");
+  Serial.println("1 snowflake mode");
+  Serial.println("2 twinkle mode");
+  Serial.println("3 super donate mode");
+  Serial.println("4 slow color climb");
+  Serial.println("5 longer color wave");
+  Serial.println("6 multicolor supertinkle");
+  Serial.println("7 strobe");
+  Serial.println("8 color strobe");
+  Serial.println("9 RAINBOW");
+  Serial.println("11 toggle random mode (may take time to switch)");
   vertical.begin();
   vertical.show(); // Initialize all pixels to 'off'
-  spiral.begin();
-  spiral.show(); // Initialize all pixels to 'off'
+
 }
 void loop() {
-
-  if ((goal[0]) && (goal[1]) && (goal[2])) {
-    simpleFadeIn(9, 3);
-    simpleFadeOut(9, 3);
-    RunningLights(0xff, 0xff, 0x00, 1);
-  } else if (goal[0] && goal[1] && !goal[2]) {
-    simpleFadeIn(9, 20);
-    TwinkleRandom(200, 1, false);
-
-    simpleFadeOut(9, 20);
-    TwinkleRandom(200, 1, false);
-  } else if (goal[0] && !goal[1] && !goal[2]) {
-    simpleFadeIn(9, 50);
-    for (int i = 0; i < 10; i++) {
-      SnowSparkle(0x10, 0x10, 0x10, 200, random(10, 100));
+  if (randomMode) {
+    colorWipe(random(0, 255), random(0, 200), random(0, 200), 0);
+    colorWipe(random(0, 200), random(0, 200), random(0, 200), 0);
+    colorWipe(random(0, 200), random(0, 200), random(0, 200), 0);
+    for (int i = 10; i < 5; i++) {
+      RunningLights(random(0, i * 255), random(0, i * 255), random(0, i * 255), 20);
+      colorInsta(random(0, i * 100), random(0, i * 100), 0x00, 0);
+      delay(100);
+      colorInsta(0xff, random(0, i * 100), random(0, i * 100), 0);
+      delay(100);
+      colorInsta(0xff, random(0, i * 100), 0x00, 0);
+      delay(100);
     }
-    simpleFadeOut(9, 50);
-    for (int i = 0; i < 10; i++) {
-      SnowSparkle(0x10, 0x10, 0x10, 200, random(10, 100));
+    for (int i = 0; i < random(0, 10); i++) {
+      theaterChase(random(0, 255), random(0, 255), random(0, 255), 50);
+    }
+    for (int i = 0; i < random(0, 1000); i++) {
+      colorInsta(0x50, 0x50, 0x50, 0);
+      delay(20);
+      colorInsta(0x00, 0x00, 0x00, 0);
+      delay(20);
+    }
+    for (int i = 0; i < random(0, 10); i++) {
+      rainbowCycle(5);
     }
   } else {
-    simpleFadeIn(9, 30);
-    simpleFadeOut(9, 30);
-  }
-  if (Serial.available()) {
-    int state = Serial.parseInt();
-    if (state == 1) {
-      goal[0] = true;
-      goal[1] = false;
-      goal[2] = false;
+
+    if ((goal[0]) && (goal[1]) && (goal[2])) {
+      RunningLights(0xff, 0xff, 0x00, 1);
+    } else if (goal[0] && goal[1] && !goal[2]) {
+      TwinkleRandom(200, 1, false);
+    } else if (goal[0] && !goal[1] && !goal[2]) {
+      //for (int i = 0; i < 10; i++) {
+      SnowSparkle(0x10, 0x10, 0x10, 200, random(10, 100));
+      //}
+
+    } else {
+
     }
-    if (state == 2) {
-      goal[0] = true;
-      goal[1] = true;
-      goal[2] = false;
-    }
-    if (state == 3) {
-      goal[0] = true;
-      goal[1] = true;
-      goal[2] = true;
-    }
-    if (state == 4) {
-        colorWipe(random(0, 255),random(0, 200),random(0, 200), 0);
-        colorWipe(random(0, 200),random(0, 200),random(0, 200), 0);
-        colorWipe(random(0, 200),random(0, 200),random(0, 200), 0);
-    }
-    if (state == 5) {
-      for (int i = 10; i < 20; i++) {
-        RunningLights(random(0, i * 255), random(0, i * 255), random(0, i * 255), 20);
-        colorInsta(random(0, i * 100), random(0, i * 100), 0x00, 0);
-        delay(100);
-        colorInsta(0xff, random(0, i * 100), random(0, i * 100), 0);
-        delay(100);
-        colorInsta(0xff, random(0, i * 100), 0x00, 0);
-        delay(100);
+    if (Serial.available()) {
+      int state = Serial.parseInt();
+      if (state == 1) {
+        goal[0] = true;
+        goal[1] = false;
+        goal[2] = false;
       }
-    }
-    if (state == 6) {
-      for (int i = 0; i < random(0, 10); i++) {
-        theaterChase(random(0, 255), random(0, 255), random(0, 255), 50);
+      if (state == 2) {
+        goal[0] = true;
+        goal[1] = true;
+        goal[2] = false;
       }
-    }
-    if (state == 7) {
-      for (int i = 0; i < random(0, 1000); i++) {
-        colorInsta(0x50, 0x50, 0x50, 0);
-        delay(20);
-        colorInsta(0x00, 0x00, 0x00, 0);
-        delay(20);
+      if (state == 3) {
+        goal[0] = true;
+        goal[1] = true;
+        goal[2] = true;
       }
-    }
-    if (state == 8) {
-      for (int i = 0; i < random(0, 100); i++) {
-        colorInsta(random(0, 100), random(0, 100), 0x00, 0);
-        delay(100);
-        colorInsta(random(0, 100), 0x00, random(0, 100), 0);
-        delay(random(0, 1000));
-        colorInsta(random(0, 100), 0xff, random(0, 100), 0);
-        delay(random(0, 1000));
-        colorInsta(random(0, 100), 0x30, 0x50, 0);
+      if (state == 4) {
+        colorWipe(random(0, 255), random(0, 200), random(0, 200), 0);
+        colorWipe(random(0, 200), random(0, 200), random(0, 200), 0);
+        colorWipe(random(0, 200), random(0, 200), random(0, 200), 0);
       }
-    }
-    if (state == 9) {
-      for (int i = 0; i < random(0, 10); i++) {
-        rainbowCycle(5);
+      if (state == 5) {
+        for (int i = 10; i < 5; i++) {
+          RunningLights(random(0, i * 255), random(0, i * 255), random(0, i * 255), 20);
+          colorInsta(random(0, i * 100), random(0, i * 100), 0x00, 0);
+          delay(100);
+          colorInsta(0xff, random(0, i * 100), random(0, i * 100), 0);
+          delay(100);
+          colorInsta(0xff, random(0, i * 100), 0x00, 0);
+          delay(100);
+        }
+      }
+      if (state == 6) {
+        for (int i = 0; i < random(0, 10); i++) {
+          theaterChase(random(0, 255), random(0, 255), random(0, 255), 50);
+        }
+      }
+      if (state == 7) {
+        for (int i = 0; i < random(0, 1000); i++) {
+          colorInsta(0x50, 0x50, 0x50, 0);
+          delay(20);
+          colorInsta(0x00, 0x00, 0x00, 0);
+          delay(20);
+        }
+      }
+      if (state == 8) {
+        for (int i = 0; i < random(0, 100); i++) {
+          colorInsta(random(0, 100), random(0, 100), 0x00, 0);
+          delay(100);
+          colorInsta(random(0, 100), 0x00, random(0, 100), 0);
+          delay(random(0, 1000));
+          colorInsta(random(0, 100), 0xff, random(0, 100), 0);
+          delay(random(0, 1000));
+          colorInsta(random(0, 100), 0x30, 0x50, 0);
+        }
+      }
+      if (state == 9) {
+        for (int i = 0; i < random(0, 10); i++) {
+          rainbowCycle(5);
+        }
+      }
+      if (state == 11) {
+        if (randomMode) {
+          randomMode = false;
+          Serial.println("random was on, now its off");
+        } if (!randomMode) {
+          randomMode = true;
+          Serial.println("random was off, now its on");
+        }
       }
     }
   }
@@ -190,8 +225,8 @@ void colorInsta(byte red, byte green, byte blue, int SpeedDelay) {
 void colorCount(byte red, byte green, byte blue, int SpeedDelay, int percent) {
   percent = (VerticalNUM * percent) / 100;
   for (uint16_t i = 0; i < spiralNUM; i++) {
-    setPixelS(i, 0, 0, 0);
-    showspiral();
+    setPixel(i, 0, 0, 0);
+    showvertical();
     delay(SpeedDelay);
   }
   Serial.println(percent);
@@ -322,32 +357,3 @@ void showvertical() {
 #endif
 }
 
-// Helpers for Spiral
-void setPixelS(int Pixel, byte red, byte green, byte blue) {
-#ifdef ADAFRUIT_NEOPIXEL_H
-  // NeoPixel
-  spiral.setPixelColor(Pixel, spiral.Color(red, green, blue));
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
-  // FastLED
-  leds[Pixel].r = red;
-  leds[Pixel].g = green;
-  leds[Pixel].b = blue;
-#endif
-}
-void setAllS(byte red, byte green, byte blue) {
-  for (int i = 0; i < spiralNUM; i++ ) {
-    setPixelS(i, red, green, blue);
-  }
-  showspiral();
-}
-void showspiral() {
-#ifdef ADAFRUIT_NEOPIXEL_H
-  // NeoPixel
-  spiral.show();
-#endif
-#ifndef ADAFRUIT_NEOPIXEL_H
-  // FastLED
-  FastLED.show();
-#endif
-}
