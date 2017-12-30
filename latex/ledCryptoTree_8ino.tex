@@ -1,0 +1,313 @@
+\hypertarget{ledCryptoTree_8ino}{\section{led\+Crypto\+Tree.\+ino File Reference}
+\label{ledCryptoTree_8ino}\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+}
+{\ttfamily \#include $<$Adafruit\+\_\+\+Neo\+Pixel.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}led\+Crypto\+Tree.\+h\char`\"{}}\\*
+Include dependency graph for led\+Crypto\+Tree.\+ino\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=288pt]{ledCryptoTree_8ino__incl}
+\end{center}
+\end{figure}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{ledCryptoTree_8ino_a4fc01d736fe50cf5b977f755b675f11d}{setup} ()
+\item 
+void \hyperlink{ledCryptoTree_8ino_afe461d27b9c48d5921c00d521181f12f}{loop} ()
+\item 
+void \hyperlink{ledCryptoTree_8ino_ad4e0c88560cf11558cafaded5334a413}{setup\+Serial} ()
+\item 
+void \hyperlink{ledCryptoTree_8ino_a3d4a7770febd94a46810f36c3d2ac32e}{setup\+Neopix} ()
+\item 
+void \hyperlink{ledCryptoTree_8ino_a9e090d395c12709aa3a4ff2754b30828}{parse\+Goals} ()
+\item 
+void \hyperlink{ledCryptoTree_8ino_a2fb2eb2b13bc6122f9c89d000e2d7d01}{parse\+Serial} ()
+\item 
+void \hyperlink{ledCryptoTree_8ino_ad5820c78928d904adcd4f284142c506b}{simple\+Fade\+In} (int pin, int speed\+Val)
+\item 
+void \hyperlink{ledCryptoTree_8ino_a10a605d30a8a525a684e774fba0504d9}{simple\+Fade\+Out} (int pin, int speed\+Val)
+\item 
+void \hyperlink{ledCryptoTree_8ino_aac3dce34012696fd5c98eb88847e61cd}{color\+Count} (\hyperlink{structLwColor}{Lw\+Color} color, int speed\+Delay, int percent)
+\item 
+void \hyperlink{ledCryptoTree_8ino_af32fca95526cc1e6753e75cbc621a10a}{cylon\+Bounce} (\hyperlink{structLwColor}{Lw\+Color} color, int eye\+Size, int speed\+Delay, int return\+Delay)
+\item 
+void \hyperlink{ledCryptoTree_8ino_a96de8ed535af4104229f69adbb6da86c}{color\+Wipe} (\hyperlink{structLwColor}{Lw\+Color} color, int speed\+Delay)
+\item 
+void \hyperlink{ledCryptoTree_8ino_a68f58d95cb1f5743c670bb22f248fed1}{running\+Lights} (\hyperlink{structLwColor}{Lw\+Color} color, int wave\+Delay)
+\item 
+void \hyperlink{ledCryptoTree_8ino_ad89dd890beff1d9b79fa3574d096cf7d}{twinkle\+Random} (int count, int speed\+Delay, boolean only\+One)
+\item 
+void \hyperlink{ledCryptoTree_8ino_ae0c03f03209028b418a16bd771a6f4c0}{snow\+Sparkle} (\hyperlink{structLwColor}{Lw\+Color} color, int sparkle\+Delay, int speed\+Delay)
+\item 
+void \hyperlink{ledCryptoTree_8ino_a907e4fe4e66cedec66df790c3acbbad7}{sparkle} (\hyperlink{structLwColor}{Lw\+Color} color, int speed\+Delay)
+\item 
+\hypertarget{ledCryptoTree_8ino_a717066609dbbcc3f6c56fd346e349dae}{void {\bfseries simple\+Wave} (float rate, int cycles, int wait)}\label{ledCryptoTree_8ino_a717066609dbbcc3f6c56fd346e349dae}
+
+\item 
+\hypertarget{ledCryptoTree_8ino_ac0a99cebb66e920d0169dda0bbe9d443}{void {\bfseries set\+Pixel} (Neo\+Pix neopix, Pixel pixel, \hyperlink{structLwColor}{Lw\+Color} color)}\label{ledCryptoTree_8ino_ac0a99cebb66e920d0169dda0bbe9d443}
+
+\item 
+\hypertarget{ledCryptoTree_8ino_ab9a4798d660acd5ba3a3f47f1f94f7ad}{void {\bfseries set\+Pixel\+Nil} (Neo\+Pix neopix, Pixel pixel)}\label{ledCryptoTree_8ino_ab9a4798d660acd5ba3a3f47f1f94f7ad}
+
+\item 
+\hypertarget{ledCryptoTree_8ino_a6eeb037028ab2d28c9357c71c8eae453}{void {\bfseries set\+All} (Neo\+Pix neopix, \hyperlink{structLwColor}{Lw\+Color} color)}\label{ledCryptoTree_8ino_a6eeb037028ab2d28c9357c71c8eae453}
+
+\item 
+\hypertarget{ledCryptoTree_8ino_aa71a1cbd34cfb17f4c617214d934ac76}{void {\bfseries set\+All\+Nil} (Neo\+Pix neopix)}\label{ledCryptoTree_8ino_aa71a1cbd34cfb17f4c617214d934ac76}
+
+\item 
+\hypertarget{ledCryptoTree_8ino_a383d68f11fa9d78622d5672b343d82cf}{void {\bfseries show} (Neo\+Pix neopix)}\label{ledCryptoTree_8ino_a383d68f11fa9d78622d5672b343d82cf}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{ledCryptoTree_8ino_aac3dce34012696fd5c98eb88847e61cd}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!color\+Count@{color\+Count}}
+\index{color\+Count@{color\+Count}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{color\+Count}]{\setlength{\rightskip}{0pt plus 5cm}void color\+Count (
+\begin{DoxyParamCaption}
+\item[{{\bf Lw\+Color}}]{color, }
+\item[{int}]{speed\+Delay, }
+\item[{int}]{percent}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_aac3dce34012696fd5c98eb88847e61cd}
+Counts the color...? Pattern.
+
+A spiral pattern T\+O\+D\+O\+: Get Lindy's interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The color to use (start with?) in \hyperlink{structLwColor}{Lw\+Color} type \\
+\hline
+{\em speed\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+{\em percent} & Percent of...? to...? \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_a96de8ed535af4104229f69adbb6da86c}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!color\+Wipe@{color\+Wipe}}
+\index{color\+Wipe@{color\+Wipe}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{color\+Wipe}]{\setlength{\rightskip}{0pt plus 5cm}void color\+Wipe (
+\begin{DoxyParamCaption}
+\item[{{\bf Lw\+Color}}]{color, }
+\item[{int}]{speed\+Delay}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a96de8ed535af4104229f69adbb6da86c}
+Pattern that wipes with color.
+
+A vertical Pattern T\+O\+D\+O\+: Get Lindy's interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The color to use (start with?) in \hyperlink{structLwColor}{Lw\+Color} type \\
+\hline
+{\em speed\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_af32fca95526cc1e6753e75cbc621a10a}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!cylon\+Bounce@{cylon\+Bounce}}
+\index{cylon\+Bounce@{cylon\+Bounce}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{cylon\+Bounce}]{\setlength{\rightskip}{0pt plus 5cm}void cylon\+Bounce (
+\begin{DoxyParamCaption}
+\item[{{\bf Lw\+Color}}]{color, }
+\item[{int}]{eye\+Size, }
+\item[{int}]{speed\+Delay, }
+\item[{int}]{return\+Delay}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_af32fca95526cc1e6753e75cbc621a10a}
+Pattern that bounds back and forth like a clasic cylon's eyes.
+
+A spiral pattern T\+O\+D\+O\+: Get Lindy's full interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The color to use (start with?) in \hyperlink{structLwColor}{Lw\+Color} type \\
+\hline
+{\em eye\+Size} & The size of the... Eyes? \\
+\hline
+{\em speed\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+{\em return\+Delay} & Rebounding delay? \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_afe461d27b9c48d5921c00d521181f12f}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!loop@{loop}}
+\index{loop@{loop}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{loop}]{\setlength{\rightskip}{0pt plus 5cm}void loop (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_afe461d27b9c48d5921c00d521181f12f}
+m\+Controller loop function (control loop) \hypertarget{ledCryptoTree_8ino_a9e090d395c12709aa3a4ff2754b30828}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!parse\+Goals@{parse\+Goals}}
+\index{parse\+Goals@{parse\+Goals}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{parse\+Goals}]{\setlength{\rightskip}{0pt plus 5cm}void parse\+Goals (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a9e090d395c12709aa3a4ff2754b30828}
+Parse the current goal in to patterns
+
+\begin{DoxySeeAlso}{See also}
+enum \hyperlink{ledCryptoTree_8h_a0ba78d87f754b7f0ab05e1534dfb54f4}{Goals} 
+\end{DoxySeeAlso}
+\hypertarget{ledCryptoTree_8ino_a2fb2eb2b13bc6122f9c89d000e2d7d01}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!parse\+Serial@{parse\+Serial}}
+\index{parse\+Serial@{parse\+Serial}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{parse\+Serial}]{\setlength{\rightskip}{0pt plus 5cm}void parse\+Serial (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a2fb2eb2b13bc6122f9c89d000e2d7d01}
+Parse the incoming serial data to set Goal progression and/or patterns
+
+\begin{DoxySeeAlso}{See also}
+Goal 
+\end{DoxySeeAlso}
+\hypertarget{ledCryptoTree_8ino_a68f58d95cb1f5743c670bb22f248fed1}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!running\+Lights@{running\+Lights}}
+\index{running\+Lights@{running\+Lights}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{running\+Lights}]{\setlength{\rightskip}{0pt plus 5cm}void running\+Lights (
+\begin{DoxyParamCaption}
+\item[{{\bf Lw\+Color}}]{color, }
+\item[{int}]{wave\+Delay}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a68f58d95cb1f5743c670bb22f248fed1}
+Pattern that runs down the string with color.
+
+A vertical Pattern T\+O\+D\+O\+: Get Lindy's interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The color to use (start with?) in \hyperlink{structLwColor}{Lw\+Color} type \\
+\hline
+{\em wave\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_a4fc01d736fe50cf5b977f755b675f11d}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!setup@{setup}}
+\index{setup@{setup}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{setup}]{\setlength{\rightskip}{0pt plus 5cm}void setup (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a4fc01d736fe50cf5b977f755b675f11d}
+m\+Controller setup function (initilizer) \hypertarget{ledCryptoTree_8ino_a3d4a7770febd94a46810f36c3d2ac32e}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!setup\+Neopix@{setup\+Neopix}}
+\index{setup\+Neopix@{setup\+Neopix}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{setup\+Neopix}]{\setlength{\rightskip}{0pt plus 5cm}void setup\+Neopix (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a3d4a7770febd94a46810f36c3d2ac32e}
+Setup for Neopixel objects \hypertarget{ledCryptoTree_8ino_ad4e0c88560cf11558cafaded5334a413}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!setup\+Serial@{setup\+Serial}}
+\index{setup\+Serial@{setup\+Serial}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{setup\+Serial}]{\setlength{\rightskip}{0pt plus 5cm}void setup\+Serial (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_ad4e0c88560cf11558cafaded5334a413}
+Setup for serial connection \hypertarget{ledCryptoTree_8ino_ad5820c78928d904adcd4f284142c506b}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!simple\+Fade\+In@{simple\+Fade\+In}}
+\index{simple\+Fade\+In@{simple\+Fade\+In}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{simple\+Fade\+In}]{\setlength{\rightskip}{0pt plus 5cm}void simple\+Fade\+In (
+\begin{DoxyParamCaption}
+\item[{int}]{pin, }
+\item[{int}]{speed\+Val}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_ad5820c78928d904adcd4f284142c506b}
+Simple fade-\/in pattern for non-\/addressable lights.
+
+A simple pattern Controls a single analog pin.
+
+
+\begin{DoxyParams}{Parameters}
+{\em pin} & The pin to control \\
+\hline
+{\em speed\+Val} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_a10a605d30a8a525a684e774fba0504d9}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!simple\+Fade\+Out@{simple\+Fade\+Out}}
+\index{simple\+Fade\+Out@{simple\+Fade\+Out}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{simple\+Fade\+Out}]{\setlength{\rightskip}{0pt plus 5cm}void simple\+Fade\+Out (
+\begin{DoxyParamCaption}
+\item[{int}]{pin, }
+\item[{int}]{speed\+Val}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a10a605d30a8a525a684e774fba0504d9}
+Simple fade-\/out pattern for non-\/addressable lights.
+
+A simple pattern Controls a single analog pin.
+
+
+\begin{DoxyParams}{Parameters}
+{\em pin} & The pin to control \\
+\hline
+{\em speed\+Val} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_ae0c03f03209028b418a16bd771a6f4c0}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!snow\+Sparkle@{snow\+Sparkle}}
+\index{snow\+Sparkle@{snow\+Sparkle}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{snow\+Sparkle}]{\setlength{\rightskip}{0pt plus 5cm}void snow\+Sparkle (
+\begin{DoxyParamCaption}
+\item[{{\bf Lw\+Color}}]{color, }
+\item[{int}]{sparkle\+Delay, }
+\item[{int}]{speed\+Delay}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_ae0c03f03209028b418a16bd771a6f4c0}
+Pattern that sparkles like snow!
+
+A vertical pattern
+
+\+: Get Lindy's interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The color to use (start with?) in \hyperlink{structLwColor}{Lw\+Color} type \\
+\hline
+{\em sparkle\+Delay} & The delay used to control the duration of a \char`\"{}sparkle\char`\"{}? \\
+\hline
+{\em speed\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_a907e4fe4e66cedec66df790c3acbbad7}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!sparkle@{sparkle}}
+\index{sparkle@{sparkle}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{sparkle}]{\setlength{\rightskip}{0pt plus 5cm}void sparkle (
+\begin{DoxyParamCaption}
+\item[{{\bf Lw\+Color}}]{color, }
+\item[{int}]{speed\+Delay}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_a907e4fe4e66cedec66df790c3acbbad7}
+Pattern that sparkles.
+
+A vertical pattern
+
+\+: Jane, you left off here 'cause brain tired. \+: Get Lindy's interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & The color to use (start with?) in \hyperlink{structLwColor}{Lw\+Color} type \\
+\hline
+{\em sparkle\+Delay} & The delay used to control the duration of a \char`\"{}sparkle\char`\"{}? \\
+\hline
+{\em speed\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+\end{DoxyParams}
+\hypertarget{ledCryptoTree_8ino_ad89dd890beff1d9b79fa3574d096cf7d}{\index{led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}!twinkle\+Random@{twinkle\+Random}}
+\index{twinkle\+Random@{twinkle\+Random}!led\+Crypto\+Tree.\+ino@{led\+Crypto\+Tree.\+ino}}
+\subsubsection[{twinkle\+Random}]{\setlength{\rightskip}{0pt plus 5cm}void twinkle\+Random (
+\begin{DoxyParamCaption}
+\item[{int}]{count, }
+\item[{int}]{speed\+Delay, }
+\item[{boolean}]{only\+One}
+\end{DoxyParamCaption}
+)}}\label{ledCryptoTree_8ino_ad89dd890beff1d9b79fa3574d096cf7d}
+Pattern that randomly \char`\"{}twinkles\char`\"{} lights in the string.
+
+A vertical pattern
+
+\+: Get Lindy's interpretation of this pattern.
+
+
+\begin{DoxyParams}{Parameters}
+{\em count} & The number of lights to twinkle in the string (Sets up density) \\
+\hline
+{\em speed\+Delay} & The delay used to control the speed (inverse of speed, lower number is faster) \\
+\hline
+{\em only\+One} & Only twinkles one light at a time? \\
+\hline
+\end{DoxyParams}

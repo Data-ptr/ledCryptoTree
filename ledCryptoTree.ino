@@ -1,48 +1,66 @@
-//
+/** @file */
+
+//##########
 // Includes
-//
+//##########
 
 #include <Adafruit_NeoPixel.h>
 #include "ledCryptoTree.h"
 
 
-// ##########
-//
+//#######################
 // mController Functions
-//
-// ##########
+//#######################
+
+/**
+  *  mController setup function (initilizer)
+  *
+  */
 
 void setup() {
   setupSerial();
- 
+
   setupNeopix();
 }
 
 
+/**
+  *  mController loop function (control loop)
+  *
+  */
+
 void loop() {
   // Read the serial in and match a number passed in
   parseSerial();
-  
+
   // Baised on the state of goal, do patterens
   parseGoals();
 }
 
 
-// ##########
-//
+//#################
 // Setup Functions
-//
-// ##########
+//#################
+
+/**
+  * Setup for serial connection
+  *
+  */
 
 void setupSerial() {
- Serial.begin(SERIAL_DATA_RATE);
-  
+  Serial.begin(SERIAL_DATA_RATE);
+
   // Wait for Serial to become active
   while(!Serial);
 
-  Serial.println("1-3 are state chamges 4-9 are light shows");
+  Serial.println(SERIAL_INTRO_TEXT);
 }
 
+
+/**
+  * Setup for Neopixel objects
+  *
+  */
 
 void setupNeopix() {
   vertical.begin();
@@ -53,11 +71,16 @@ void setupNeopix() {
 }
 
 
-// ##########
-//
+//#################
 // Parse Functions
-//
-// ##########
+//#################
+
+/**
+  * Parse the current goal in to patterns
+  *
+  * @see enum Goals
+  *
+  */
 
 void parseGoals() {
   switch(goal) {
@@ -65,35 +88,35 @@ void parseGoals() {
     { // Scope it cause I can (But really initilizers)
       simpleFadeIn(FAIRY_PIN, 3);
       simpleFadeOut(FAIRY_PIN, 3);
-      
+
       runningLights((LwColor){0xff, 0xff, 0x00}, 20);
     }
     break;
-    
+
     case MEDIUM:
       simpleFadeIn(FAIRY_PIN, 20);
       twinkleRandom(20, 100, false);
-      
+
       simpleFadeOut(FAIRY_PIN, 20);
       twinkleRandom(20, 100, false);
     break;
-    
+
     case SMALL:
     {
       simpleFadeIn(FAIRY_PIN, 50);
-      
+
       // Making local variable as it will be in a loop (Yeah, it is probably optimized that way)
       LwColor c = {0x10, 0x10, 0x10};
-      
+
       for(uint8_t i = 0; i < 20; i++) {
         snowSparkle(c, 20, random(10, 100));
- 
+
         if(10 == i)
           simpleFadeOut(FAIRY_PIN, 50);
       }
     }
     break;
-    
+
     default:
       simpleFadeIn(FAIRY_PIN, 30);
       simpleFadeOut(FAIRY_PIN, 30);
@@ -102,20 +125,28 @@ void parseGoals() {
 }
 
 
+/**
+  * Parse the incoming serial data to set Goal progression
+  * and/or patterns
+  *
+  * @see Goal
+  *
+  */
+
 void parseSerial() {
   if (Serial.available()) {
     int state = Serial.parseInt();
 
-    // If nothing, or anything but a number is passed 
+    // If nothing, or anything but a number is passed
     // after a time out, or return is pressed 0 is returned.
     // Skip processing an input that will not trigger an actual
-    // result. 
+    // result.
     if (state) {
       switch (state) {
         case 1:
           goal = SMALL;
         break;
-        
+
         case 2:
           goal = MEDIUM;
         break;
@@ -135,7 +166,7 @@ void parseSerial() {
         case 6:
           colorCount(LW_GREEN, 50, 50);
         break;
-      
+
         case 7:
           colorCount(LW_GREEN, 50, 100);
         break;
@@ -153,19 +184,41 @@ void parseSerial() {
 }
 
 
-// ##########
-//
+//#################
 // Simple Patterns
 // (Fairy Lights)
-// ##########
+//#################
+
+/**
+  * Simple fade-in pattern for non-addressable lights.
+  *
+  * A simple pattern
+  * Controls a single analog pin.
+  *
+  * @param pin      The pin to control
+  * @param speedVal The delay used to control the speed
+  *                 (inverse of speed, lower number is faster)
+  */
 
 void simpleFadeIn(int pin, int speedVal) {
   for (uint8_t fadeValue = COLOR_VAL_MIN; fadeValue <= COLOR_VAL_MAX; fadeValue += 5) {
     analogWrite(pin, fadeValue);
 
     delay(speedVal);
-  } 
+  }
 }
+
+
+/**
+  * Simple fade-out pattern for non-addressable lights.
+  *
+  * A simple pattern
+  * Controls a single analog pin.
+  *
+  * @param pin      The pin to control
+  * @param speedVal The delay used to control the speed
+  *                 (inverse of speed, lower number is faster)
+  */
 
 
 void simpleFadeOut(int pin, int speedVal) {
@@ -177,16 +230,25 @@ void simpleFadeOut(int pin, int speedVal) {
 }
 
 
-
-// ##########
-//
+//#################
 // Spiral Patterns
-//
-// ##########
+//#################
 
+/**
+  * Counts the color...? Pattern.
+  *
+  * A spiral pattern
+  * TODO: Get Lindy's interpretation of this pattern.
+  *
+  * @param color      The color to use (start with?) in LwColor type
+  * @param speedDelay The delay used to control the speed
+  *                   (inverse of speed, lower number is faster)
+  * @param percent    Percent of...? to...?
+  *
+  */
 
 void colorCount(LwColor color, int speedDelay, int percent) {
-  //Modify percent
+  // Modify percent
   percent = (VERTICAL_NUM * percent) / 100; //TODO: Make a macro for dis
   //TODO: Also, I think this is supposed to be SPIRAL_NUM?
 
@@ -210,12 +272,27 @@ void colorCount(LwColor color, int speedDelay, int percent) {
 }
 
 
+/**
+  * Pattern that bounds back and forth like a clasic cylon's eyes.
+  *
+  * A spiral pattern
+  * TODO: Get Lindy's full interpretation of this pattern.
+  *
+  * @param color       The color to use (start with?) in LwColor type
+  * @param eyeSize     The size of the... Eyes?
+  * @param speedDelay  The delay used to control the speed
+  *                    (inverse of speed, lower number is faster)
+  * @param returnDelay Rebounding delay?
+  *
+  */
+
+
 //TODO: It is labled as sprial, includes spiral, but also has vertical?
 void cylonBounce(LwColor color, int eyeSize, int speedDelay, int returnDelay) {
   //
   // Spiral pattern
   //
-  
+
   LwColor colorTenthed = (LwColor){
     DIV_CONV(color.red, 10),
     DIV_CONV(color.green, 10),
@@ -232,7 +309,7 @@ void cylonBounce(LwColor color, int eyeSize, int speedDelay, int returnDelay) {
       i,
       colorTenthed
     );
-    
+
     // Inner-loop
     for(Pixel j = 1; j <= (Pixel)eyeSize; j++) {
       setPixel(
@@ -278,7 +355,7 @@ void cylonBounce(LwColor color, int eyeSize, int speedDelay, int returnDelay) {
     }
 
     Pixel n = i + eyeSize + 1;
- 
+
     setPixel(
       spiral,
       n,
@@ -294,12 +371,21 @@ void cylonBounce(LwColor color, int eyeSize, int speedDelay, int returnDelay) {
 }
 
 
-// ##########
-//
+//###################
 // Vertical Patterns
-//
-// ##########
+//###################
 
+/**
+  * Pattern that wipes with color.
+  *
+  * A vertical Pattern
+  * TODO: Get Lindy's interpretation of this pattern.
+  *
+  * @param color      The color to use (start with?) in LwColor type
+  * @param speedDelay The delay used to control the speed
+  *                   (inverse of speed, lower number is faster)
+  *
+  */
 
 void colorWipe(LwColor color, int speedDelay) {
   for(Pixel i = 0; i < VERTICAL_NUM; i++) {
@@ -316,11 +402,23 @@ void colorWipe(LwColor color, int speedDelay) {
 }
 
 
+/**
+  * Pattern that runs down the string with color.
+  *
+  * A vertical Pattern
+  * TODO: Get Lindy's interpretation of this pattern.
+  *
+  * @param color     The color to use (start with?) in LwColor type
+  * @param waveDelay The delay used to control the speed
+  *                  (inverse of speed, lower number is faster)
+  *
+  */
+
 void runningLights(LwColor color, int waveDelay) {
   for(Pixel i = 0; i < VERTICAL_NUM * 2; i++) {
     for(Pixel j = 0; j < VERTICAL_NUM; j++) {
       int p = j + i;
-      
+
       setPixel(
         vertical,
         j,
@@ -339,11 +437,21 @@ void runningLights(LwColor color, int waveDelay) {
 }
 
 
+/**
+  * Pattern that randomly "twinkles" lights in the string.
+  *
+  * A vertical pattern
+  *
+  * @TODO: Get Lindy's interpretation of this pattern.
+  *
+  * @param count      The number of lights to twinkle in the string
+  *                   (Sets up density)
+  * @param speedDelay The delay used to control the speed
+  *                   (inverse of speed, lower number is faster)
+  * @param onlyOne    Only twinkles one light at a time?
+  */
+
 void twinkleRandom(int count, int speedDelay, boolean onlyOne) {
-  //
-  // Vertical Pattern
-  //
-  
   setAllNil(vertical);
 
   for(int i = 0; i < count; i++) {
@@ -364,7 +472,7 @@ void twinkleRandom(int count, int speedDelay, boolean onlyOne) {
     if(onlyOne) {
       setAllNil(vertical);
     }
-    
+
     //TODO: Delay? Show?
   }
 
@@ -372,16 +480,26 @@ void twinkleRandom(int count, int speedDelay, boolean onlyOne) {
 }
 
 
-void snowSparkle(LwColor color, int sparkleDelay, int speedDelay) {
-  //
-  // Vertical Pattern
-  //
+/**
+  * Pattern that sparkles like snow!
+  *
+  * A vertical pattern
+  *
+  * @TODO: Get Lindy's interpretation of this pattern.
+  *
+  * @param color        The color to use (start with?) in LwColor type
+  * @param sparkleDelay The delay used to control the duration of a "sparkle"?
+  * @param speedDelay   The delay used to control the speed
+  *                     (inverse of speed, lower number is faster)
+  *
+  */
 
+void snowSparkle(LwColor color, int sparkleDelay, int speedDelay) {
   Pixel pixel = (Pixel)random(VERTICAL_NUM);
 
   // Set all pixles to passed in values
   setAll(vertical, color);
-  
+
   // Set random pixel to white
   setPixel(vertical, pixel, LW_WHITE);
 
@@ -399,11 +517,22 @@ void snowSparkle(LwColor color, int sparkleDelay, int speedDelay) {
 }
 
 
-void sparkle(LwColor color, int speedDelay) {
-  //
-  // Vertical Pattern
-  //
+/**
+  * Pattern that sparkles.
+  *
+  * A vertical pattern
+  *
+  * @TODO: Jane, you left off here 'cause brain tired.
+  * @TODO: Get Lindy's interpretation of this pattern.
+  *
+  * @param color        The color to use (start with?) in LwColor type
+  * @param sparkleDelay The delay used to control the duration of a "sparkle"?
+  * @param speedDelay   The delay used to control the speed
+  *                     (inverse of speed, lower number is faster)
+  *
+  */
 
+void sparkle(LwColor color, int speedDelay) {
   Pixel pixel = (Pixel)random(VERTICAL_NUM);
 
   // Set random pixel to passed in values
@@ -446,11 +575,9 @@ void simpleWave(float rate, int cycles, int wait) {
 }
 
 
-// ##########
-//
+//################################
 // Helpers for Adafruit_NeoPixels
-//
-// ##########
+//################################
 
 
 void setPixel(NeoPix neopix, Pixel pixel, LwColor color) {
@@ -498,4 +625,3 @@ void show(NeoPix neopix) {
 #endif
 
 }
-
